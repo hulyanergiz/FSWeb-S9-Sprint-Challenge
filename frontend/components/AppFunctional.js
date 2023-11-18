@@ -86,12 +86,29 @@ export default function AppFunctional(props) {
     // ve buna göre state i değiştirir.
   }
 
-  function onChange(evt) {
+  function changeHandler(evt) {
     // inputun değerini güncellemek için bunu kullanabilirsiniz
+    setEmail(evt.target.value);
   }
 
-  function onSubmit(evt) {
+  function submitHandler(evt) {
     // payloadu POST etmek için bir submit handlera da ihtiyacınız var.
+    evt.preventDefault();
+    const payload = {
+      x: getXY().slice(1, 2),
+      y: getXY().slice(4, 5),
+      steps: steps,
+      email: email,
+    };
+    axios
+      .post("http://localhost:9000/api/result", payload)
+      .then((res) => {
+        console.log(res);
+        setMessage(res.data.message);
+      })
+      .catch((err) => {
+        setMessage(err.response.data.message);
+      });
   }
 
   return (
@@ -108,7 +125,7 @@ export default function AppFunctional(props) {
         ))}
       </div>
       <div className="info">
-        <h3 id="message"></h3>
+        <h3 id="message">{message}</h3>
       </div>
       <div id="keypad">
         <button
@@ -147,8 +164,14 @@ export default function AppFunctional(props) {
           reset
         </button>
       </div>
-      <form>
-        <input id="email" type="email" placeholder="email girin"></input>
+      <form onSubmit={(e) => submitHandler(e)}>
+        <input
+          id="email"
+          type="email"
+          placeholder="email girin"
+          alue={email}
+          onChange={(e) => changeHandler(e)}
+        ></input>
         <input id="submit" type="submit"></input>
       </form>
     </div>
