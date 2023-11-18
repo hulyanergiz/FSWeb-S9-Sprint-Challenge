@@ -1,16 +1,33 @@
-import React from 'react'
+import axios from "axios";
+import React, { useState } from "react";
 
 // önerilen başlangıç stateleri
-const initialMessage = ''
-const initialEmail = ''
-const initialSteps = 0
-const initialIndex = 4 //  "B" nin bulunduğu indexi
+const initialMessage = "";
+const initialEmail = "";
+const initialSteps = 0;
+const initialIndex = 4; //  "B" nin bulunduğu indexi
 
 export default function AppFunctional(props) {
+  const [index, setIndex] = useState(initialIndex);
+  const [steps, setSteps] = useState(0);
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
   // AŞAĞIDAKİ HELPERLAR SADECE ÖNERİDİR.
   // Bunları silip kendi mantığınızla sıfırdan geliştirebilirsiniz.
 
   function getXY() {
+    const coordinates = [
+      "(1, 1)",
+      "(2, 1)",
+      "(3, 1)",
+      "(1, 2)",
+      "(2, 2)",
+      "(3, 2)",
+      "(1, 3)",
+      "(2, 3)",
+      "(3, 3)",
+    ];
+    return coordinates[index];
     // Koordinatları izlemek için bir state e sahip olmak gerekli değildir.
     // Bunları hesaplayabilmek için "B" nin hangi indexte olduğunu bilmek yeterlidir.
   }
@@ -23,12 +40,45 @@ export default function AppFunctional(props) {
 
   function reset() {
     // Tüm stateleri başlangıç ​​değerlerine sıfırlamak için bu helperı kullanın.
+    setIndex(initialIndex);
+    setSteps(initialSteps);
+    setEmail(initialEmail);
+    setMessage(initialMessage);
   }
 
   function sonrakiIndex(yon) {
     // Bu helper bir yön ("sol", "yukarı", vb.) alır ve "B" nin bir sonraki indeksinin ne olduğunu hesaplar.
     // Gridin kenarına ulaşıldığında başka gidecek yer olmadığı için,
     // şu anki indeksi değiştirmemeli.
+    if (yon === "right") {
+      if (index % 3 !== 2) {
+        setIndex(index + 1);
+        setSteps(steps + 1);
+      } else {
+        setMessage("Sağa gidemezsiniz");
+      }
+    } else if (yon === "left") {
+      if (index % 3 !== 0) {
+        setIndex(index - 1);
+        setSteps(steps + 1);
+      } else {
+        setMessage("Sola gidemezsiniz");
+      }
+    } else if (yon === "up") {
+      if (index > 2) {
+        setIndex(index - 3);
+        setSteps(steps + 1);
+      } else {
+        setMessage("Yukarıya gidemezsiniz");
+      }
+    } else if (yon === "down") {
+      if (index < 6) {
+        setIndex(index + 3);
+        setSteps(steps + 1);
+      } else {
+        setMessage("Aşağıya gidemezsiniz");
+      }
+    }
   }
 
   function ilerle(evt) {
@@ -47,32 +97,60 @@ export default function AppFunctional(props) {
   return (
     <div id="wrapper" className={props.className}>
       <div className="info">
-        <h3 id="coordinates">Koordinatlar (2, 2)</h3>
-        <h3 id="steps">0 kere ilerlediniz</h3>
+        <h3 id="coordinates">Koordinatlar {getXY()}</h3>
+        <h3 id="steps">{steps} kere ilerlediniz</h3>
       </div>
       <div id="grid">
-        {
-          [0, 1, 2, 3, 4, 5, 6, 7, 8].map(idx => (
-            <div key={idx} className={`square${idx === 4 ? ' active' : ''}`}>
-              {idx === 4 ? 'B' : null}
-            </div>
-          ))
-        }
+        {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((idx) => (
+          <div key={idx} className={`square${idx === index ? " active" : ""}`}>
+            {idx === index ? "B" : null}
+          </div>
+        ))}
       </div>
       <div className="info">
         <h3 id="message"></h3>
       </div>
       <div id="keypad">
-        <button id="left">SOL</button>
-        <button id="up">YUKARI</button>
-        <button id="right">SAĞ</button>
-        <button id="down">AŞAĞI</button>
-        <button id="reset">reset</button>
+        <button
+          id="left"
+          onClick={(e) => {
+            sonrakiIndex(e.target.id);
+          }}
+        >
+          SOL
+        </button>
+        <button
+          id="up"
+          onClick={(e) => {
+            sonrakiIndex(e.target.id);
+          }}
+        >
+          YUKARI
+        </button>
+        <button
+          id="right"
+          onClick={(e) => {
+            sonrakiIndex(e.target.id);
+          }}
+        >
+          SAĞ
+        </button>
+        <button
+          id="down"
+          onClick={(e) => {
+            sonrakiIndex(e.target.id);
+          }}
+        >
+          AŞAĞI
+        </button>
+        <button id="reset" onClick={reset}>
+          reset
+        </button>
       </div>
       <form>
         <input id="email" type="email" placeholder="email girin"></input>
         <input id="submit" type="submit"></input>
       </form>
     </div>
-  )
+  );
 }
