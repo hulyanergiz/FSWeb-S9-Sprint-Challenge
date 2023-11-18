@@ -9,9 +9,9 @@ const initialIndex = 4; //  "B" nin bulunduğu indexi
 
 export default function AppFunctional(props) {
   const [index, setIndex] = useState(initialIndex);
-  const [steps, setSteps] = useState(0);
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
+  const [steps, setSteps] = useState(initialSteps);
+  const [email, setEmail] = useState(initialEmail);
+  const [message, setMessage] = useState(initialMessage);
   // AŞAĞIDAKİ HELPERLAR SADECE ÖNERİDİR.
   // Bunları silip kendi mantığınızla sıfırdan geliştirebilirsiniz.
 
@@ -100,6 +100,7 @@ export default function AppFunctional(props) {
       steps: steps,
       email: email,
     };
+    setEmail(initialEmail);
     axios
       .post("http://localhost:9000/api/result", payload)
       .then((res) => {
@@ -169,7 +170,7 @@ export default function AppFunctional(props) {
           id="email"
           type="email"
           placeholder="email girin"
-          alue={email}
+          value={email}
           onChange={(e) => changeHandler(e)}
         ></input>
         <input id="submit" type="submit"></input>
